@@ -181,8 +181,8 @@ public class JMSMapMsg extends AbstractMojo {
 		Template vilocityTemplate = velocityEngine.getTemplate("templates/java/MessageTemplate.vm");
 
 		// use standard tools
-		Map<String, Object> toolProperties = new HashMap<String, Object>();
-		toolProperties.put("engine", velocityEngine);
+		Map<String, Object> toolmembers = new HashMap<String, Object>();
+		toolmembers.put("engine", velocityEngine);
 		ToolManager toolManager = new ToolManager(true, true);
 
 		// set up the Velocity context model
@@ -190,7 +190,7 @@ public class JMSMapMsg extends AbstractMojo {
 		velocityContext.put("packageName", specPackage);
 		velocityContext.put("className", classSpecification.get("name"));
 		velocityContext.put("classJavadoc", classSpecification.get("javadoc"));
-		velocityContext.put("properties", getParametersMap((List<Map<String, Object>>) classSpecification.get("properties")));
+		velocityContext.put("members", getParametersMap((List<Map<String, Object>>) classSpecification.get("members")));
 
 		// generate the code
 		StringWriter codeWriter = new StringWriter();
@@ -253,8 +253,8 @@ public class JMSMapMsg extends AbstractMojo {
 		Template vilocityTemplate = velocityEngine.getTemplate("templates/java/EnumTemplate.vm");
 
 		// use standard tools
-		Map<String, Object> toolProperties = new HashMap<String, Object>();
-		toolProperties.put("engine", velocityEngine);
+		Map<String, Object> toolmembers = new HashMap<String, Object>();
+		toolmembers.put("engine", velocityEngine);
 		ToolManager toolManager = new ToolManager(true, true);
 
 		// set up the Velocity context model
@@ -304,6 +304,8 @@ public class JMSMapMsg extends AbstractMojo {
 				parameter.put("name", (String) paramaterSpec.get("name"));
 				parameter.put("type", (String) paramaterSpec.get("type"));
 				parameter.put("value", (String) paramaterSpec.get("value"));
+				parameter.put("property", (String) paramaterSpec.get("property"));
+				parameter.put("required", (String) paramaterSpec.get("required"));
 				parameter.put("javadoc", (String) paramaterSpec.get("javadoc"));
 				parameters.add(parameter);
 			}
