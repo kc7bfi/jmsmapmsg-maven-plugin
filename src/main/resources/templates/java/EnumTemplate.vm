@@ -1,0 +1,39 @@
+package $packageName;
+
+/**
+ * Generated with Velocity - DO NOT EDIT
+#if ($enumJavadoc)
+ *
+ * $enumJavadoc
+#end
+ */
+public enum $display.capitalize($enumName) {
+	
+#foreach ($member in $members)
+#if ($member.javadoc)
+	 /** $member.javadoc */
+#end
+	${member.value}("#if ($member.name)$member.name#else$member.value#end")#if($foreach.hasNext),#end
+	
+#end
+	;
+	
+    private String name;
+
+    $display.capitalize($enumName)(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public static $display.capitalize($enumName) fromString(String name) {
+        for ($display.capitalize($enumName) e : ${display.capitalize($enumName)}.values()) {
+            if (e.name.equalsIgnoreCase(name)) {
+                return e;
+            }
+        }
+        return null;
+    }
+}

@@ -1,0 +1,90 @@
+package $packageName;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Generated with Velocity - DO NOT EDIT
+#if ($classJavadoc)
+ *
+ * $classJavadoc
+#end
+ */
+public class $display.capitalize($className) {
+	private static final Logger LOGGER = LoggerFactory.getLogger(${display.capitalize($className)}.class.getName());
+
+#foreach ($property in $properties)
+	private $property.type $property.name;
+#end
+
+	/**
+	 * Constructor.
+	 */
+	public $display.capitalize($className)() {
+	}
+
+	/**
+	 * Constructor
+	 *
+#foreach ($property in $properties)
+#if ($property.javadoc)
+	 * @param $property.name $property.javadoc
+#end
+#end
+	 */
+	public $display.capitalize($className)(#foreach ($property in $properties)$property.type $property.name#if($foreach.hasNext),#end#end) {
+#foreach ($property in $properties)
+		this.$property.name = $property.name;
+#end
+	}
+
+#foreach ($property in $properties)
+#if ($property.javadoc)
+	/**
+	 * @return $property.javadoc
+	 */
+#end
+#if ($property.type == "boolean")
+	public $property.type is$display.capitalize($property.name)() {
+		return $property.name;
+	}
+	
+#else
+	public $property.type get$display.capitalize($property.name)() {
+		return $property.name;
+	}
+	
+#end
+#end
+#foreach ($property in $properties)
+#if ($property.javadoc)
+	/**
+	 * @param $property.name $property.javadoc
+	 */
+#end
+	public void set$display.capitalize($property.name)($property.type $property.name) {
+		this.$property.name = $property.name;
+	}
+
+#end
+
+	public MapMessage toMessage() {
+	
+		// check for required valies
+#foreach ($property in $properties)
+#if ($property.required)
+		if ($property.name == null) throw new JMSException("Property " + $property.name " is required");
+#end
+#end
+	
+		MapMessage msg = new MapMessage();
+#foreach ($property in $properties)
+#if ($property.type == "String")
+		msg.setString("$property.name", $property.name);
+#end
+#end
+		
+		return msg;
+	}
+}

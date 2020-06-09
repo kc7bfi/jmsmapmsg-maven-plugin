@@ -1,0 +1,24 @@
+{
+	"package": "net.psgglobal.vicads.jmsmapmsg.DBAdminMsgs",
+	"messages": [
+		{
+			"eventType": "DBAdmin",
+			"properties": [
+				{ "name": "DBAction", "type": "net.psgglobal.vicads.jmsmapmsg.DBAdminMsgs.DBActionEnum" },
+				{ "name": "DBTable", "type": "String" },
+				{ "name": "UID", "type": "long"}
+			]
+		}
+	],
+	"enums": [
+		{
+			"name": "DBActionEnum",
+			"javadoc": "The various menu events",
+			"members": [
+				{ "value": "Insert", "name": "Insert" },
+				{ "value": "Update", "name": "Update" },
+				{ "value": "Delete", "name": "Delete" }
+			]
+		}
+	]
+}
