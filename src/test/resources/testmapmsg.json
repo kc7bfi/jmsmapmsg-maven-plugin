@@ -4,9 +4,9 @@
 		{
 			"eventType": "DBAdmin",
 			"properties": [
-				{ "name": "DBAction", "type": "net.psgglobal.vicads.jmsmapmsg.DBAdminMsgs.DBActionEnum" },
-				{ "name": "DBTable", "type": "String" },
-				{ "name": "UID", "type": "long"}
+				{ "name": "DBAction", "type": "net.psgglobal.vicads.jmsmapmsg.DBAdminMsgs.DBActionEnum", "required": true },
+				{ "name": "DBTable", "type": "String", "required": true },
+				{ "name": "UID", "type": "long", "required": true }
 			]
 		}
 	],
