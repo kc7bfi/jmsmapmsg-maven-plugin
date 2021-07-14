@@ -42,6 +42,13 @@ public class $display.capitalize($className) {
 #end
 	}
 
+	/**
+	 * @return the event type
+	 */
+	public static String getEventType() {
+		return TheEventType;
+	}
+
 #foreach ($property in $properties)
 #if ($property.javadoc)
 	/**
