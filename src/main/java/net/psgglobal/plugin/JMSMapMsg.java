@@ -181,8 +181,8 @@ public class JMSMapMsg extends AbstractMojo {
 		Template vilocityTemplate = velocityEngine.getTemplate("templates/java/MessageTemplate.vm");
 
 		// use standard tools
-		Map<String, Object> toolmembers = new HashMap<String, Object>();
-		toolmembers.put("engine", velocityEngine);
+		Map<String, Object> toolproperties = new HashMap<String, Object>();
+		toolproperties.put("engine", velocityEngine);
 		ToolManager toolManager = new ToolManager(true, true);
 
 		// set up the Velocity context model
@@ -190,7 +190,8 @@ public class JMSMapMsg extends AbstractMojo {
 		velocityContext.put("packageName", specPackage);
 		velocityContext.put("className", classSpecification.get("name"));
 		velocityContext.put("classJavadoc", classSpecification.get("javadoc"));
-		velocityContext.put("members", getParametersMap((List<Map<String, Object>>) classSpecification.get("members")));
+		velocityContext.put("eventType", classSpecification.get("eventType"));
+		velocityContext.put("properties", getPropertiesMap((List<Map<String, Object>>) classSpecification.get("properties")));
 
 		// generate the code
 		StringWriter codeWriter = new StringWriter();
@@ -253,8 +254,8 @@ public class JMSMapMsg extends AbstractMojo {
 		Template vilocityTemplate = velocityEngine.getTemplate("templates/java/EnumTemplate.vm");
 
 		// use standard tools
-		Map<String, Object> toolmembers = new HashMap<String, Object>();
-		toolmembers.put("engine", velocityEngine);
+		Map<String, Object> toolproperties = new HashMap<String, Object>();
+		toolproperties.put("engine", velocityEngine);
 		ToolManager toolManager = new ToolManager(true, true);
 
 		// set up the Velocity context model
@@ -262,7 +263,7 @@ public class JMSMapMsg extends AbstractMojo {
 		velocityContext.put("packageName", specPackage);
 		velocityContext.put("enumName", enumSpecification.get("name"));
 		velocityContext.put("enumJavadoc", enumSpecification.get("javadoc"));
-		velocityContext.put("members", getParametersMap((List<Map<String, Object>>) enumSpecification.get("members")));
+		velocityContext.put("properties", getPropertiesMap((List<Map<String, Object>>) enumSpecification.get("properties")));
 
 		// generate the code
 		StringWriter codeWriter = new StringWriter();
@@ -292,11 +293,11 @@ public class JMSMapMsg extends AbstractMojo {
 	}
 
 	/**
-	 * Gather the parameter/members elements
+	 * Gather the parameter/properties elements
 	 * @param paramatersSpec the parameter specification
 	 * @return the parameters map
 	 */
-	private List<Map<String, String>> getParametersMap(List<Map<String, Object>> paramatersSpec) {
+	private List<Map<String, String>> getPropertiesMap(List<Map<String, Object>> paramatersSpec) {
 		List<Map<String, String>> parameters = new LinkedList<Map<String, String>>();
 		if (paramatersSpec != null) {
 			for (Map<String, Object> paramaterSpec : paramatersSpec) {
@@ -306,7 +307,11 @@ public class JMSMapMsg extends AbstractMojo {
 				parameter.put("value", (String) paramaterSpec.get("value"));
 				parameter.put("property", (String) paramaterSpec.get("property"));
 				parameter.put("required", (String) paramaterSpec.get("required"));
+				parameter.put("minimum", (String) paramaterSpec.get("minimum"));
 				parameter.put("javadoc", (String) paramaterSpec.get("javadoc"));
+
+				// default some values
+				if (parameter.get("property") == null) parameter.put("property", (String) paramaterSpec.get("name"));
 				parameters.add(parameter);
 			}
 		}

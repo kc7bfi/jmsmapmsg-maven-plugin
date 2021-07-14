@@ -1,8 +1,10 @@
 package $packageName;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
+import javax.jms.Topic;
 
 /**
  * Generated with Velocity - DO NOT EDIT
@@ -13,8 +15,10 @@ import javax.jms.MapMessage;
  */
 public class $display.capitalize($className) {
 
-#foreach ($member in $members)
-	private $member.type $member.name;
+	private static String TheEventType = "$eventType";
+
+#foreach ($property in $properties)
+	private $property.type $property.name;
 #end
 
 	/**
@@ -26,122 +30,117 @@ public class $display.capitalize($className) {
 	/**
 	 * Constructor
 	 *
-#foreach ($member in $members)
-#if ($member.javadoc)
-	 * @param $member.name $member.javadoc
+#foreach ($property in $properties)
+#if ($property.javadoc)
+	 * @param $property.name $property.javadoc
 #end
 #end
 	 */
-	public $display.capitalize($className)(#foreach ($member in $members)$member.type $member.name#if($foreach.hasNext),#end#end) {
-#foreach ($member in $members)
-		this.$member.name = $member.name;
+	public $display.capitalize($className)(#foreach ($property in $properties)$property.type $property.name#if($foreach.hasNext),#end#end) {
+#foreach ($property in $properties)
+		this.$property.name = $property.name;
 #end
 	}
 
-#foreach ($member in $members)
-#if ($member.javadoc)
+#foreach ($property in $properties)
+#if ($property.javadoc)
 	/**
-	 * @return $member.javadoc
+	 * @return $property.javadoc
 	 */
 #end
-#if ($member.type == "boolean")
-	public $member.type is$display.capitalize($member.name)() {
-		return $member.name;
+#if ($property.type == "boolean")
+	public $property.type is$display.capitalize($property.name)() {
+		return $property.name;
 	}
 	
 #else
-	public $member.type get$display.capitalize($member.name)() {
-		return $member.name;
+	public $property.type get$display.capitalize($property.name)() {
+		return $property.name;
 	}
 	
 #end
 #end
-#foreach ($member in $members)
-#if ($member.javadoc)
+#foreach ($property in $properties)
+#if ($property.javadoc)
 	/**
-	 * @param $member.name $member.javadoc
+	 * @param $property.name $property.javadoc
 	 */
 #end
-	public void set$display.capitalize($member.name)($member.type $member.name) {
-		this.$member.name = $member.name;
+	public void set$display.capitalize($property.name)($property.type $property.name) {
+		this.$property.name = $property.name;
 	}
 
 #end
 
 	/**
-	 * Convert to a MapMessage
-	 * @param jmsContext the JMS Context
-	 * @returns the map message
-	 * @throws JMSException message errors
+	 * @param mapMsg the message to test
+	 * @return true if the correct event type
+	 * @throws JMSException a JMS exception
 	 */
-	public MapMessage toMessage(JMSContext jmsContext) throws JMSException {
-	
-		// check for required values
-#foreach ($member in $members)
-#if ($member.required)
-		if ($member.name == null) throw new JMSException("member $member.property is required");
+	public static boolean isMessage(MapMessage mapMsg) throws JMSException {
+		return mapMsg.itemExists("EventType") && TheEventType.equals(mapMsg.getString("EventType"));
+	}
+
+	/**
+	 * @param jmsConnectionFactory the JMS connection factory
+	 * @param topic the JMS topic
+	 * @param ttl the message time-to-live
+	 * @throws NumberFormatException problem unpacking a number
+	 * @throws JMSException a JMS exception
+	 */
+	private void validate() throws JMSException {
+#foreach ($property in $properties)
+#if ($property.required)
+		if ($property.name == null) throw new JMSException("property $property.property is required");
+#end
+#if ($property.minimum)
+		if ($property.name < $property.minimum) throw new JMSException("property $property.property must be at least $property.minimum");
 #end
 #end
+	}
 	
-		MapMessage msg = jmsContext.createMapMessage();
-#foreach ($member in $members)
-#if ($member.type == "String")
-		msg.setString("$member.property", $member.name);
-#elseif ($member.type == "Long")
-		msg.setLong("$member.property", $member.name);
-#else
-		if ($member.name instanceof Enum) {
-			msg.setString("$member.property", ${member.name}.getName());
+	/**
+	 * @param jmsConnectionFactory the JMS connection factory
+	 * @param topic the JMS topic
+	 * @param ttl the message time-to-live
+	 * @throws NumberFormatException problem unpacking a number
+	 * @throws JMSException a JMS exception
+	 */
+	public void send(ConnectionFactory jmsConnectionFactory, Topic topic, long ttl) throws NumberFormatException, JMSException {
+		validate();
+		try (JMSContext jmsContext = jmsConnectionFactory.createContext()) {
+			MapMessage mapMsg = jmsContext.createMapMessage();
+#foreach ($property in $properties)
+#if ($property.type == "String")
+			mapMsg.setString("$property.property", $property.name);
+#elseif ($property.type == "Long")
+			mapMsg.setLong("$property.property", $property.name);
+#elseif ($property.type == "Integer")
+			mapMsg.setInt("$property.property", $property.name);
+#end
+#end
+			jmsContext.createProducer().setTimeToLive(ttl).send(topic, mapMsg);
 		}
+	}
+
+	/**
+	 * @param mapMsg the received map message
+	 * @return the message
+	 * @throws JMSException a JMS exception
+	 */
+	public static $className fromMessage(MapMessage mapMsg) throws JMSException {
+		if (!isMessage(mapMsg)) throw new JMSException("Wrong Event Type");
+		$className msg = new $className();
+#foreach ($property in $properties)
+#if ($property.type == "String")
+		if (mapMsg.itemExists("$property.property")) msg.set$display.capitalize(${property.name})(mapMsg.getString("$property.property"));
+#elseif ($property.type == "Long")
+		if (mapMsg.itemExists("$property.property")) msg.set$display.capitalize(${property.name})(mapMsg.getLong("$property.property"));
+#elseif ($property.type == "Integer")
+		if (mapMsg.itemExists("$property.property")) msg.set$display.capitalize(${property.name})(mapMsg.getInt("$property.property"));
 #end
-#end		
+#end
+		msg.validate();
 		return msg;
-	}
-
-	/**
-	 * Convert to a MapMessage
-	 * @param jmsContext the JMS Context
-#foreach ($member in $members)
-#if ($member.javadoc)
-	 * @param $member.name $member.javadoc
-#end
-#end
-	 * @returns the map message
-	 * @throws JMSException message errors
-	 */
-	public static MapMessage toMessage(JMSContext jmsContext,#foreach ($member in $members)$member.type $member.name#if($foreach.hasNext),#end#end) throws JMSException {
-		$display.capitalize($className) message = new $display.capitalize($className)(#foreach ($member in $members)$member.name#if($foreach.hasNext),#end#end);
-		return message.toMessage(jmsContext);
-	}
-
-	/**
-	 * Convert from a MapMessage
-	 * @param msg the message
-	 * @returns the map message
-	 * @throws JMSException message errors
-	 */
-	public static $display.capitalize($className) fromMessage(MapMessage msg) throws JMSException {
-	
-		// check for required values
-#foreach ($member in $members)
-#if ($member.required)
-		if (!msg.itemExists("$member.property")) throw new JMSException("member $member.property is required");
-#end
-#end
-	
-		$display.capitalize($className) message = new $display.capitalize($className)();
-#foreach ($member in $members)
-#if ($member.type == "String")
-		message.$member.name = msg.getString("$member.property");
-#elseif ($member.type == "Long")
-		message.$member.name = msg.getLong("$member.property");
-#else
-		if (message.$member.name instanceof Enum) {
-			message.$member.name = ${member.type}.fromString(msg.getString("$member.property"));
-		}
-#end
-#end
-
-		return message;
 	}
 }
