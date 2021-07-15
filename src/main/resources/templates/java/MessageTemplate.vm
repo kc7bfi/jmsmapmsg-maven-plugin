@@ -17,6 +17,7 @@ public class $display.capitalize($className) {
 
 	private static String TheEventType = "$eventType";
 
+	private String eventType = TheEventType;
 #foreach ($property in $properties)
 	private $property.type $property.name;
 #end
@@ -45,8 +46,8 @@ public class $display.capitalize($className) {
 	/**
 	 * @return the event type
 	 */
-	public static String getEventType() {
-		return TheEventType;
+	public String getEventType() {
+		return eventType;
 	}
 
 #foreach ($property in $properties)
