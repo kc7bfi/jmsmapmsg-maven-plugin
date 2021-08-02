@@ -116,6 +116,9 @@ public class $display.capitalize($className) {
 	 */
 	public void send(ConnectionFactory jmsConnectionFactory, Topic topic, long ttl) throws NumberFormatException, JMSException {
 		validate();
+#if ($limitToTopic)
+		if (!"$limitToTopic".equals(topic.getTopicName())) throw new JMSException("Message limited to topic $limitToTopic - current topic " + topic.getTopicName());
+#end
 		try (JMSContext jmsContext = jmsConnectionFactory.createContext()) {
 			MapMessage mapMsg = jmsContext.createMapMessage();
 			mapMsg.setString("EventType", TheEventType);

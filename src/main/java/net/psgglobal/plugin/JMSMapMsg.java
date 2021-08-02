@@ -191,6 +191,7 @@ public class JMSMapMsg extends AbstractMojo {
 		velocityContext.put("className", classSpecification.get("name"));
 		velocityContext.put("classJavadoc", classSpecification.get("javadoc"));
 		velocityContext.put("eventType", classSpecification.get("eventType"));
+		velocityContext.put("limitToTopic", classSpecification.get("limitToTopic"));
 		velocityContext.put("properties", getPropertiesMap((List<Map<String, Object>>) classSpecification.get("properties")));
 
 		// generate the code
