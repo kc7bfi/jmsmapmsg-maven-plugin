@@ -267,7 +267,7 @@ public class JMSMapMsg extends AbstractMojo {
 		velocityContext.put("packageName", specPackage);
 		velocityContext.put("enumName", enumSpecification.get("name"));
 		velocityContext.put("enumJavadoc", enumSpecification.get("javadoc"));
-		velocityContext.put("properties", getPropertiesMap((List<Map<String, Object>>) enumSpecification.get("properties")));
+		velocityContext.put("members", getPropertiesMap((List<Map<String, Object>>) enumSpecification.get("members")));
 
 		// generate the code
 		StringWriter codeWriter = new StringWriter();

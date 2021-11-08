@@ -18,19 +18,22 @@ public enum $display.capitalize($enumName) {
 #end
 	;
 	
-    private String name;
+    private String value;
 
-    $display.capitalize($enumName)(String name) {
-        this.name = name;
+    $display.capitalize($enumName)(String value) {
+        this.value = value;
     }
 
-    public String getName() {
-        return this.name;
+    /*
+     * return the enum name
+     */
+    public String getValue() {
+        return this.value;
     }
-
-    public static $display.capitalize($enumName) fromString(String name) {
+    
+    public static $display.capitalize($enumName) fromString(String value) {
         for ($display.capitalize($enumName) e : ${display.capitalize($enumName)}.values()) {
-            if (e.name.equalsIgnoreCase(name)) {
+            if (e.value.equalsIgnoreCase(value)) {
                 return e;
             }
         }

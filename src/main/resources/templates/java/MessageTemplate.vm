@@ -131,6 +131,8 @@ public class $display.capitalize($className) {
 			mapMsg.setInt("$property.property", $property.name);
 #elseif ($property.type == "Boolean")
 			mapMsg.setBoolean("$property.property", $property.name);
+#else
+			mapMsg.setString("$property.property", ${property.name}.getValue());
 #end
 #end
 			jmsContext.createProducer().setTimeToLive(ttl).send(topic, mapMsg);
@@ -154,6 +156,8 @@ public class $display.capitalize($className) {
 		if (mapMsg.itemExists("$property.property")) msg.set$display.capitalize(${property.name})(mapMsg.getInt("$property.property"));
 #elseif ($property.type == "Boolean")
 		if (mapMsg.itemExists("$property.property")) msg.set$display.capitalize(${property.name})(mapMsg.getBoolean("$property.property"));
+#else
+		if (mapMsg.itemExists("$property.property")) msg.set$display.capitalize(${property.name})(${property.type}.fromString(mapMsg.getString("$property.property")));
 #end
 #end
 		msg.validate();
