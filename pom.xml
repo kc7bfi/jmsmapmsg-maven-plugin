@@ -37,7 +37,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<commons.io.version>2.11.0</commons.io.version>
-		<guava.version>30.1-jre</guava.version>
+		<guava.version>32.0.0-jre</guava.version>
 		<junit.version>4.13.1</junit.version>
 		<maven.version>3.5.0</maven.version>
 		<maven.annotations.version>3.5</maven.annotations.version>
